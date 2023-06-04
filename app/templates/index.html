@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule Generator</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#add-form').submit(function(event) {
+                event.preventDefault();
+                var name = $('#name').val();
+                var hours = $('#hours').val();
+                var days = $('input[name="days"]:checked').map(function(){
+                    return $(this).val();
+                }).get();
+
+                $.ajax({
+                    url: '/add_employee',
+                    type: 'POST',
+                    data: JSON.stringify({
+                        'name': name,
+                        'hours': hours,
+                        'days': days
+                    }),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        $('#employee-list').append('<li>' + name + ' - ' + hours + ' hours</li>');
+                        $('#name').val('');
+                        $('#hours').val('');
+                        $('input[name="days"]').prop('checked', false);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Schedule Generator</h1>
+    <form id="add-form">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name"><br><br>
+        <label for="hours">Hours:</label>
+        <input type="text" name="hours" id="hours"><br><br>
+        <label for="days">Days:</label>
+        <input type="checkbox" name="days" value="Monday"> Monday
+        <input type="checkbox" name="days" value="Tuesday"> Tuesday
+        <input type="checkbox" name="days" value="Wednesday"> Wednesday
+        <input type="checkbox" name="days" value="Thursday"> Thursday
+        <input type="checkbox" name="days" value="Friday"> Friday
+        <input type="checkbox" name="days" value="Saturday"> Saturday
+        <input type="checkbox" name="days" value="Sunday"> Sunday<br><br>
+        <input type="submit" value="Add Employee">
+    </form>
+    <div id="employee-details">
+        <h3>Added Employees:</h3>
+        <ul id="employee-list"></ul>
+    </div>
+</body>
+</html>
